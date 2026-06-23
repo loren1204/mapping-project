@@ -5,6 +5,8 @@ import { addChoroplethLayers, attachChoroplethClickHandler, setChoroplethVisibil
 import { CATEGORIES } from '../constants/index.js';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+mapboxgl.accessToken = MAPBOX_TOKEN;
+
 const Map = ({ locations, selectedCity, choroplethVisible, onRegionClick }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
