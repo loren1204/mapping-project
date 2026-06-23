@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CATEGORIES, TEAM_MEMBERS, CHNA_QUADRANTS, ENGAGEMENT_STATUSES } from '../constants/index.js';
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 const AddLocationModal = ({ onSave, onClose }) => {
   const [form, setForm] = useState({
     name: '',
