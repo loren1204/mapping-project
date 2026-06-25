@@ -62,14 +62,27 @@ export function updateFeature(features, id, fields) {
   });
 }
 
-// ─── Export all locations as a downloadable GeoJSON file ─────────────────────
-export function exportAsGeoJSON(features) {
-  const collection = { type: 'FeatureCollection', features };
-  const blob = new Blob([JSON.stringify(collection, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `leehealth-stakeholders-${new Date().toISOString().split('T')[0]}.geojson`;
-  a.click();
-  URL.revokeObjectURL(url);
+
+import * as XLSX from 'xlsx'; 
+// ─── Export all locations as a downloadable Excel file ───────────────────────
+export function exportAsExcel(features) {
+  const rows = features.map((f) => ({
+    Name: f.properties.name,
+    Address: f.properties.address,
+    Category: f.properties.category,
+    'CHNA Quadrant': f.properties.chnaQuadrant,
+    'Engagement Status': f.properties.engagementStatus,
+    Households: f.properties.households,
+    'Assigned Team': (f.properties.assignedTeam || []).join(', '),
+    Description: f.properties.description,
+    Longitude: f.geometry.coordinates[0],
+    Latitude: f.geometry.coordinates[1],
+    'Date Added': f.properties.dateAdded,
+    'Last Updated': f.properties.lastUpdated,
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(rows);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Stakeholders');
+  XLSX.writeFile(workbook, `leehealth-stakeholders-${new Date().toISOString().split('T')[0]}.xlsx`);
 }
