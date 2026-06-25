@@ -4,7 +4,7 @@ import Toolbar from './components/Toolbar.jsx';
 import LocationList from './components/LocationList.jsx';
 import AddLocationModal from './components/AddLocationModal.jsx';
 import RegionPanel from './components/RegionPanel.jsx';
-import { loadLocations, saveLocations, buildFeature, updateFeature, exportAsGeoJSON } from './utils/storage.js';
+import { loadLocations, saveLocations, buildFeature, updateFeature, exportAsExcel } from './utils/storage.js';
 import './App.css';
 
 function App() {
@@ -42,7 +42,7 @@ function App() {
         choroplethVisible={choroplethVisible}
         onToggleChoropleth={() => setChoroplethVisible((v) => !v)}
         onAddLocation={() => setShowAddModal(true)}
-        onExport={() => exportAsGeoJSON(locations)}
+        onExport={() => exportAsExcel(locations)}
       />
 
       {/* Main content */}
