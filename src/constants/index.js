@@ -54,3 +54,10 @@ export const ENGAGEMENT_STATUSES = [
   { id: 'inactive',  label: 'Inactive',       color: '#94a3b8' },
   { id: 'prospect',  label: 'Prospect',       color: '#3b82f6' },
 ];
+
+// ─── Map Display Modes ────────────────────────────────────────────────────────
+export const MAP_MODES = [
+  { id: 'light',     label: 'Light',     style: 'mapbox://styles/mapbox/light-v11' },
+  { id: 'dark',      label: 'Dark',      style: 'mapbox://styles/mapbox/dark-v11' },
+  { id: 'satellite', label: 'Satellite', style: 'mapbox://styles/mapbox/satellite-streets-v12' },
+];

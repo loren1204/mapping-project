@@ -1,9 +1,8 @@
 //city fly-to buttons, choropleth toggle with legend, location button, Export Excel button.
 
-import { CITIES, CHNA_QUADRANTS } from '../constants/index.js';
+import { CITIES, CHNA_QUADRANTS, MAP_MODES } from '../constants/index.js';
 
-const Toolbar = ({ onCitySelect, choroplethVisible, onToggleChoropleth, onAddLocation, onExport }) => {
-  return (
+const Toolbar = ({ onCitySelect, choroplethVisible, onToggleChoropleth, onAddLocation, onExport, mapStyle, onMapStyleChange, is3D, onToggle3D }) => {  return (
     <div className="glass" style={styles.toolbar}>
       {/* City navigation */}
       <div style={styles.group}>
@@ -18,6 +17,37 @@ const Toolbar = ({ onCitySelect, choroplethVisible, onToggleChoropleth, onAddLoc
           </button>
         ))}
       </div>
+<div style={styles.divider} />
+
+{/* Map mode switcher */}
+<div style={styles.group}>
+  <span style={styles.groupLabel}>View</span>
+  {MAP_MODES.map((mode) => (
+    <button
+      key={mode.id}
+      style={{
+        ...styles.cityBtn,
+        background: mapStyle === mode.id ? 'linear-gradient(135deg, #1A6FB5, #2F8FE0)' : 'rgba(255,255,255,0.5)',
+        color: mapStyle === mode.id ? '#fff' : '#0B2538',
+        boxShadow: mapStyle === mode.id ? '0 4px 14px rgba(26, 111, 181, 0.4)' : 'none',
+      }}
+      onClick={() => onMapStyleChange(mode.id)}
+    >
+      {mode.label}
+    </button>
+  ))}
+  <button
+    style={{
+      ...styles.toggleBtn,
+      background: is3D ? 'linear-gradient(135deg, #2FA66B, #3DBE7E)' : 'rgba(11, 37, 56, 0.06)',
+      color: is3D ? '#fff' : '#5B7A8C',
+      boxShadow: is3D ? '0 4px 14px rgba(47, 166, 107, 0.4)' : 'none',
+    }}
+    onClick={onToggle3D}
+  >
+    3D
+  </button>
+</div>
 
       <div style={styles.divider} />
 

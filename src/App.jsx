@@ -4,45 +4,46 @@ import Toolbar from './components/Toolbar.jsx';
 import LocationList from './components/LocationList.jsx';
 import AddLocationModal from './components/AddLocationModal.jsx';
 import RegionPanel from './components/RegionPanel.jsx';
-import { loadLocations, saveLocations, buildFeature, updateFeature, exportAsExcel } from './utils/storage.js';
-import logo from './assets/lee-health-logo.png';
+import { loadLocations, addLocation, updateLocation, deleteLocation, exportAsExcel } from './utils/storage.js';
+import logo from './assets/PartnersInWellness(1).png';
 import './App.css';
 
 function App() {
-  // ─── State ──────────────────────────────────────────────────────────────────
-  const [locations, setLocations] = useState(() => loadLocations());
+  const [locations, setLocations] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
   const [choroplethVisible, setChoroplethVisible] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState(null);
+  const [mapStyle, setMapStyle] = useState('light');
+  const [is3D, setIs3D] = useState(false);
 
-  // ─── Persist to localStorage on every change ────────────────────────────────
   useEffect(() => {
-    saveLocations(locations);
-  }, [locations]);
+    loadLocations().then(setLocations);
+  }, []);
 
-  // ─── Location handlers ───────────────────────────────────────────────────────
-  const handleAddLocation = (formData) => {
-    const feature = buildFeature(formData);
-    setLocations((prev) => [...prev, feature]);
+  const handleAddLocation = async (formData) => {
+    const feature = await addLocation(formData);
+    if (feature) setLocations((prev) => [...prev, feature]);
   };
 
-  const handleUpdateLocation = (id, fields) => {
-    setLocations((prev) => updateFeature(prev, id, fields));
+  const handleUpdateLocation = async (id, fields) => {
+    const updated = await updateLocation(id, fields);
+    if (updated) {
+      setLocations((prev) => prev.map((f) => (f.properties.id === id ? updated : f)));
+    }
   };
 
-  const handleDeleteLocation = (id) => {
-    setLocations((prev) => prev.filter((f) => f.properties.id !== id));
+  const handleDeleteLocation = async (id) => {
+    const success = await deleteLocation(id);
+    if (success) setLocations((prev) => prev.filter((f) => f.properties.id !== id));
   };
 
   return (
     <div className="app-root">
-      {/* App header */}
       <div className="app-header">
         <img src={logo} alt="Lee Health Partners In Wellness" className="app-header-logo" />
       </div>
 
-      {/* Top toolbar */}
       <div style={{ padding: '0 14px 14px' }}>
         <Toolbar
           onCitySelect={setSelectedCity}
@@ -50,12 +51,14 @@ function App() {
           onToggleChoropleth={() => setChoroplethVisible((v) => !v)}
           onAddLocation={() => setShowAddModal(true)}
           onExport={() => exportAsExcel(locations)}
+          mapStyle={mapStyle}
+          onMapStyleChange={setMapStyle}
+          is3D={is3D}
+          onToggle3D={() => setIs3D((v) => !v)}
         />
       </div>
 
-      {/* Main content */}
       <div className="app-body">
-        {/* Left sidebar */}
         <aside className="sidebar glass">
           <div className="sidebar-header">
             <h1 className="sidebar-title">Stakeholder Locations</h1>
@@ -68,15 +71,15 @@ function App() {
           />
         </aside>
 
-        {/* Map */}
         <div className="map-wrap">
           <Map
             locations={locations}
             selectedCity={selectedCity}
             choroplethVisible={choroplethVisible}
             onRegionClick={setSelectedRegion}
+            mapStyle={mapStyle}
+            is3D={is3D}
           />
-          {/* Region info panel — overlays the map */}
           <RegionPanel
             region={selectedRegion}
             onClose={() => setSelectedRegion(null)}
@@ -84,7 +87,6 @@ function App() {
         </div>
       </div>
 
-      {/* Add location modal */}
       {showAddModal && (
         <AddLocationModal
           onSave={handleAddLocation}
